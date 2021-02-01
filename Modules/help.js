@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const fs = require("fs");
 
-module.exports.run = async (message,args,config) => {
+module.exports.run = async (client,message,args,config) => {
     let lstModules = __dirname + '/../ServerData/lstModules.json';
     if (fs.existsSync(lstModules)) {
         lstModules = fs.readFileSync(lstModules);

@@ -38,6 +38,7 @@ module.exports.run = async (client,message, args, config) => {
 
   }
   else {
+    console.log(config)
     throw Error("Mauvaise Syntaxe : `"+ config.Prefix+"say [salon] [titre]`");
   }
 

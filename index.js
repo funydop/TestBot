@@ -5,7 +5,7 @@ const client = new discord.Client();
 const pathDirectoryDataServer = './ServerData/';
 
 
-client.login("");
+client.login("ODA0ODc0NDgzMTY5MDk5Nzg2.YBSrxg.HjhLXBm6JRkvh45rmlqGT2w4mF8");
 
 client.on('guildCreate', function (guild) {
     // Verification que le dossier existe 
@@ -58,23 +58,30 @@ client.on('message', function (message) {
         if (fs.existsSync(configurationServer)) {
             configurationServer = fs.readFileSync(configurationServer);
             configurationServer = JSON.parse(configurationServer);
+    
             const args = message.content.slice(configurationServer.Prefix.length).trim().split(/ +/g);
             const command = args.shift().toLowerCase();
             // vérification du prefix 
+            console.log("commande : " + configurationServer.Prefix);
+
             if (message.content.indexOf(configurationServer.Prefix) !== 0) return;
             // vérification de la commande 
+            
+
             if (String.isNullOrEmpty(command))
                 throw new Error("votre commande est vide  : `" + command + "`") // ne pas d'erreur mais lancer le fichier help 
             if (!configurationServer.LstModulesServer.find(x => x.name == command))
                 throw new Error("merci de tapper une commande valide");
             //chargement de la configuration du module 
+           
             if ((fs.existsSync(pathDirectoryDataServer + message.guild.id + "\\" + command + ".json"))) {
                 configurationServer = fs.readFileSync(pathDirectoryDataServer + message.guild.id + "\\" + command + ".json");
                 configurationServer = JSON.parse(configurationServer);
             }
+
             // lancement du module 
             let commandeFile = require(`./Modules/${command}.js`);
-            commandeFile.run(message, args, configurationServer).catch(error => {
+            commandeFile.run(client,message, args, configurationServer).catch(error => {
                 // message d'erreur 
                 const messageError = new discord.MessageEmbed()
                     .setTimestamp()
@@ -86,7 +93,7 @@ client.on('message', function (message) {
                     .addField("__**Le problème Perciste ?**__", "Merci de contacté <@200335073403207680> ou un membre du staff");
 
                 message.channel.send(messageError).then(msgerror => {
-                    setTimeout(clear => { message.delete(); msgerror.delete(); }, 7000);
+                    setTimeout(clear => { message.delete(); msgerror.delete(); }, 4000);
                 })
             });
         }
@@ -102,9 +109,9 @@ client.on('message', function (message) {
             .setTitle(":warning: __ un problème est survenue __")
             .addField("__** Message d'erreur :  **__", error.message)
             .addField("__**Le problème Perciste ?**__", "Merci de contacté <@200335073403207680> ou un membre du staff");
-
+            
         message.channel.send(messageError).then(msgerror => {
-            setTimeout(clear => { message.delete(); msgerror.delete(); }, 7000);
+            setTimeout(clear => { message.delete(); msgerror.delete(); }, 4000);
         })
     }
 })
