@@ -5,7 +5,7 @@ const client = new discord.Client();
 const pathDirectoryDataServer = './ServerData/';
 
 
-client.login("ODA0ODc0NDgzMTY5MDk5Nzg2.YBSrxg.jH_NY7A4cniu19jBmfO5wQ8GrKg");
+client.login("");
 
 client.on('guildCreate', function (guild) {
     // Verification que le dossier existe 
