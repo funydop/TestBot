@@ -40,7 +40,7 @@ client.on('guildCreate', function (guild) {
             // Création de l'object De base 
             objectGlobal = new Object();
             objectGlobal.Prefix = "!";
-            objectGlobal.LstModulesServer = [{ "name": "help" }, { "name": "config" }, { "name": "savedata" }];
+            objectGlobal.LstModulesServer = [{ "name": "help" }, { "name": "config" }];
 
             // Conversion Object To Json
             objectGlobal = JSON.stringify(objectGlobal);

@@ -10,11 +10,11 @@
         },
         {
             "name": "say",
-            "help": "permet la configuration du serveur",
+            "help": "permet d'envoyé un message dans un salon",
             "descModule": "NO_DESC"
         },
         {
-            "name": "savedata",
+            "name": "config",
             "help": "permet la configuration du serveur",
             "descModule": "NO_DESC"
         }
