@@ -25,7 +25,7 @@ client.on('guildCreate', function (guild) {
             })
         }
     });
-    fs.stat(pathDirectoryDataServer + guild.id + "\\config.json", function (err) {
+    fs.stat(pathDirectoryDataServer + guild.id + "/config.json", function (err) {
         if (!err) {
             console.log('Fichier Globale du serveur existant');
         }
@@ -44,7 +44,7 @@ client.on('guildCreate', function (guild) {
 
             // Conversion Object To Json
             objectGlobal = JSON.stringify(objectGlobal);
-            fs.writeFile(pathDirectoryDataServer + guild.id + "\\config.json", objectGlobal, callback)
+            fs.writeFile(pathDirectoryDataServer + guild.id + "/config.json", objectGlobal, callback)
         }
     });
 });
