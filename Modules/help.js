@@ -32,7 +32,13 @@ module.exports.run = async (client,message,args,config) => {
         .addField("__**Liste des commandes :**__", "Menu d'aide du Bot ! Apprenez toutes les commandes :")
         .addField("__**Commandes**__", stringtoHelp)
 
-    return message.channel.send(helpEmbed)
+    return message.channel.send(helpEmbed).then(messageSend=>{
+        setTimeout(() => {
+            messageSend.delete();
+        }, (10000));
+    })
 
 }
 // pour l'instant rester cpùùe àa mais au finale reussi a faire en fonction de la permission de la personne 
+
+// fait une commande Calenda lier a gooogle Agenda 
