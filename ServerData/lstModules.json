@@ -1,6 +1,7 @@
 {
      "whitlistModule": [
-        "help"
+        "help",
+        "config"
           ],
     "listmodules": [
         {
@@ -17,6 +18,21 @@
             "name": "config",
             "help": "permet la configuration du serveur",
             "descModule": "NO_DESC"
+        },
+        {
+            "name": "form",
+            "help": "permet la configuration du serveur",
+            "descModule": "NO_DESC"
+        },
+        {
+            "name": "rank",
+            "help": "Gestion d'un hiérarchie dans dans Discord",
+            "descModule": "NO_DESC"
+        },
+        {
+            "name": "sugg",
+            "help": "faire de la suggestion",
+            "descModule": "et oui mon ga"
         }
     ]
 }
