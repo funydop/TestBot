@@ -17,8 +17,8 @@ const suggestion = new Discord.MessageEmbed()
         .setTimestamp()
         .setColor(7339827)
         .setDescription(messagePlayer.content.replace("!sugg "));
-let salon = message.guild.channels.cache.get("809537090030141533");
-salon.send(suggestion).then(msg=>{
+let salon = message.guild.channels.cache.get(config.salonSuggestion);
+    salon.send(suggestion).then(msg=>{
     msg.react('✔');
     msg.react('❌');
 })
