@@ -15,6 +15,7 @@ function CreateModule(pathFile){
     // Création de l'object De base 
     objectGlobal = new Object();
     objectGlobal.salonSuggestion = "";
+    objectGlobal.salonCommande = "";
     // Conversion Object To Json
     objectGlobal = JSON.stringify(objectGlobal);
     console.log(objectGlobal);
