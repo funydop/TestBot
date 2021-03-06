@@ -158,7 +158,7 @@ module.exports.run = async (client, message, args, config) => {
         // vérification du dossier serveur  
         if (fs.existsSync(pathDossierServeur)) { // fair ça plus propre une sorte de cleanstring qui tolower et .trim 
             if (args.length == 2 && tabCommande.find(x => x == args[0].toLowerCase().trim()) && lstModules.listmodules.find(x => x.name.trim() == args[1].toLowerCase().trim())) {
-                deuxArgs(pathDossierServeur, args[0].toLowerCase(), args[1].toLowerCase(), message, lstModules);
+                deuxArgs(pathDossierServeur, args[0].toLowerCase(), args[1].toLowerCase(), message, lstModules,config);
             } else if (args.length == 4)
                 quatreArge(pathDossierServeur, ags[0], "fd", "fdf", "fdsd", "fdsf",) // TODO 
             else
@@ -171,7 +171,7 @@ module.exports.run = async (client, message, args, config) => {
         throw Error("merci de tapper un config valide ")
 }
 
-function deuxArgs(pathDossierServeur, commande, module, message, lstModules) {
+function deuxArgs(pathDossierServeur, commande, module, message, lstModules,configurationserver) {
 
     if (commande == "add") {
 
