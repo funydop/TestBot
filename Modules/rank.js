@@ -1,4 +1,5 @@
 
+const { Console } = require("console");
 const Discord = require("discord.js");
 const fs = require("fs");
 const pathGlobalDataServer = './ServerData/';
@@ -132,7 +133,7 @@ if (!roleFind)
 
                         //  let emojie = message.guild.emojis.cache.get()
                         let msgRankup = new Discord.MessageEmbed() // mettre sa dans emojie serveur :/ 
-                            .setDescription(message.guild.emojis.cache.get('809932769991983154').toString() + " <@!" + userID + ">")
+                            .setDescription(message.guild.emojis.cache.get(config.emojiRankUp).toString() + " <@!" + userID + ">")
                             .addField(" \n **Rank Up** en tant que **" + role.name + "**\nMerci de ton implication dans la faction.", "\u200B")
                             .setFooter(message.guild.name, message.guild.iconURL())
                             .setTimestamp()
@@ -149,7 +150,12 @@ if (!roleFind)
                 let role = message.guild.roles.cache.get(lstRoles[lstRoles.length - 1].role);
 
                 // user.removeRole(lastIdRole);
+                if(role){
                 user.roles.add(role);
+                }
+                else
+                throw Error("Role non  trouver");
+                
                 config.OtherRoleWelcom.forEach(element => {
                     user.roles.add(element);
                 })
@@ -160,6 +166,8 @@ if (!roleFind)
                     .setFooter(message.guild.name, message.guild.iconURL())
                     .setTimestamp()
                     .setColor(role.color);
+
+                    console.log("PATATATE");
                 salonRank.send(msgRankup);
             }
 
