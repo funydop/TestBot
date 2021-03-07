@@ -161,7 +161,7 @@ if (!roleFind)
                 })
 
                 let msgRankup = new Discord.MessageEmbed()
-                    .setDescription(message.guild.emojis.cache.get('809932769991983154').toString() + " <@!" + userID + ">")
+                    .setDescription(message.guild.emojis.cache.get(config.emojiRankUp).toString() + " <@!" + userID + ">")
                     .addField(" \n **Rank Up** en tant que **" + role.name + "** \n Merci de ton implication dans la faction.", "\u200B")
                     .setFooter(message.guild.name, message.guild.iconURL())
                     .setTimestamp()
