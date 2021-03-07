@@ -18,6 +18,7 @@ function CreateModule(pathFile){
     objectGlobal.Hierarchie =[{"role":"","ordre":1}];
     objectGlobal.SalonRankUp = "";
     objectGlobal.OtherRoleWelcom = [""]
+    objectGlobal.emojiRankUp = "";
     // Conversion Object To Json
     objectGlobal = JSON.stringify(objectGlobal);
     console.log(objectGlobal);
