@@ -1,6 +1,5 @@
 const Discord = require("discord.js");
 const fs = require("fs");
-const { cpuUsage } = require("process");
 const pathGlobalDataServer = './ServerData/';
 
 // a terme ferme Dialogue avec bot genre !config => Quelle module voulez vous config => que ovulez vous faire M=> Modules supprimer 
@@ -151,8 +150,6 @@ module.exports.run = async (client, message, args, config) => {
             console.log(mymodule);
 
         }
-        console.log("CAtO?");
-
     }
     else if (args.length > 1) {
         // vérification du dossier serveur  
