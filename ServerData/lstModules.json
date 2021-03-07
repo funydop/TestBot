@@ -33,6 +33,16 @@
             "name": "sugg",
             "help": "faire de la suggestion",
             "descModule": "et oui mon ga"
+        },
+        {
+            "name": "ping",
+            "help": "faire de la suggestion",
+            "descModule": "et oui mon ga"
+        },
+        {
+            "name": "gtmoji",
+            "help": "faire de la suggestion",
+            "descModule": "et oui mon ga"
         }
     ]
 }
