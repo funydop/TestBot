@@ -1,0 +1,48 @@
+{
+     "whitlistModule": [
+        "help",
+        "config"
+          ],
+    "listmodules": [
+        {
+            "name": "help",
+            "help": "permmet de vous aider",
+            "descModule": "NO_DESC"
+        },
+        {
+            "name": "say",
+            "help": "permet d'envoyé un message dans un salon",
+            "descModule": "NO_DESC"
+        },
+        {
+            "name": "config",
+            "help": "permet la configuration du serveur",
+            "descModule": "NO_DESC"
+        },
+        {
+            "name": "form",
+            "help": "permet la configuration du serveur",
+            "descModule": "NO_DESC"
+        },
+        {
+            "name": "rank",
+            "help": "Gestion d'un hiérarchie dans dans Discord",
+            "descModule": "NO_DESC"
+        },
+        {
+            "name": "sugg",
+            "help": "faire de la suggestion",
+            "descModule": "et oui mon ga"
+        },
+        {
+            "name": "ping",
+            "help": "faire de la suggestion",
+            "descModule": "et oui mon ga"
+        },
+        {
+            "name": "gtmoji",
+            "help": "faire de la suggestion",
+            "descModule": "et oui mon ga"
+        }
+    ]
+}
