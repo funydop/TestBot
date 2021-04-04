@@ -36,7 +36,7 @@ function CreateModule(client, message, args){
     objectRank.SalonRankUp = "";
     objectRank.OtherRoleWelcom = [""]
     objectRank.emojiRankUp = "";
-    objectRank.LstMemberFac =  [{"IdMember":"","LastRankUp":""}]
+    objectRank.LstMemberFac =  []
     // Conversion Object To Json
     objectRank = JSON.stringify(objectRank);
     fs.writeFile(path, objectRank, callback)
