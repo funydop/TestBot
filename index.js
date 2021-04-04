@@ -23,7 +23,7 @@ const loadCommands = (dir = "./Modules") => {
         };
 };
 
-const loadEvents = (dir = "./events/") => {
+const loadEvents = (dir = "./Events/") => {
         const events = fs.readdirSync(`${dir}/`).filter(files => files.endsWith(".js"));
 
         for (const event of events) {
