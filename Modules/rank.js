@@ -1,6 +1,7 @@
 
 const Discord = require("discord.js");
 const fs = require("fs");
+const { cpuUsage } = require("process");
 const pathGlobalDataServer = './ServerData/';
 
 // modif fait de variable 1 pourt l'objet et l'autre pour le path cvomme ça la pathe on le mets tout en haut pas besoin de le remetttre ( si ya besoin de la membre . guile quand même le mettre en haut pour le scop ) 
@@ -8,77 +9,64 @@ const pathGlobalDataServer = './ServerData/';
 
 // rajouter le fait que seulement les whitliste peuveut fair la commande 
 
-module.exports.run = async (client, message, args, config) => {
+module.exports.run = async (client, message, args) => {
     // recuperation configuration rank. 
     if (!args[0])
-    throw new Error("merci de mettre un argument valide") // fait message opour !rank et !rank up 
-// let author = message.guild.members.cache.get(message.author.id);
+        throw new Error("merci de mettre un argument valide") // fait message opour !rank et !rank up 
+    // let author = message.guild.members.cache.get(message.author.id);
+    let checkPerm = client.CheckPermission(client, message);
 
-let authorRole = message.guild.member(message.author)._roles;
-let roleFind = false
-
-authorRole.forEach(element => {
-    if (config.RolesWhitList.find(x => x == element))
-        roleFind = true;
-})
-if (!roleFind)
-    throw new Error("vous navez pas la permission d'utiliser cette commande");
+    if (!checkPerm)
+        throw new Error("vous navez pas la permission d'utiliser cette commande");
 
 
-    let lstRoles = config.Hierarchie.sort().reverse();
-    let salonRank = message.guild.channels.cache.get(config.SalonRankUp);
-    ;
+    let lstRoles = client.dataModule.Hierarchie.sort().reverse();
+    let salonRank = message.guild.channels.cache.get(client.dataModule.SalonRankUp);
+
     // rank list 
-    if (args[0].toLowerCase() == "list") { //  ne pas le faire pour le dernier role ça sert a R 
+    if (args[0].toLowerCase() == "list") { //  ne pas le faire pour le dernier role ça sert a R  // si ya une dernier date rank up prendre si non dir prochain rank actualiser et le du rank up venir ecrire edans le ficheir 
         lstRoles.forEach(element => {
             let lstUserWithRole = message.guild.roles.cache.get(element.role).members.map(m => m.user.id);
             // Tempo 
             // message.channel.send("Role : <@&" + element.role + ">" + lstUserWithRole);
-            console.log("Nb Personne " + lstUserWithRole.length);
-                
+
             lstUserWithRole.forEach(userRole => {
-               let user = message.guild.members.cache.get(userRole);
-               let dateLastRankUp;
+                let user = message.guild.members.cache.get(userRole);
+                let dateLastRankUp;
+                let dateArriver = new Date(user.joinedTimestamp);
+                let MessageRank = new Discord.MessageEmbed();
+
                 // salonRank.messages.fetch().then(MessageRankUp => {
                 // voir si plutard faut filtrer par id du salon; 
-                salonRank.messages.fetch({limite:100}).then(MessageRankUp => {
-                    console.log(MessageRankUp.size);    
-                    let msgWithMention = MessageRankUp.filter(x=> x.content.indexOf(user.user.id) != -1 || (x.embeds[0] != null &&x.embeds[0].description.indexOf(user.user.id) != -1) )
-                     
-                    if(msgWithMention != null)
-                    {
-                        msgWithMention.sort();
-                        let result = Array.from(msgWithMention);
-                        // result = result[result.length-1]
-                        // dateLastRankUp = new Date(result[1].createdTimestamp);
-                        console.log("dedan" + dateLastRankUp); 
-                        // let timestampMention = msgWithMention[0].createdTimestamp;
-                        // console.log("TIME :: " + timestampMention)
-
-                    }
-                    // let messageNaNEmbed = MessageRankUp.find(x => x.content.indexOf("Rank") != -1);
-                    // console.log(messageNaNEmbed);
 
 
-                            // console.log('id user : '  + user.user.id +" Nom user : " +user.user.username) ;
-                            // console.log('description :  ' + test.embeds[0].description );
-                        
-                        // let dateArriver = new Date(user.joinedTimestamp);
-                        // let MessageRank = new Discord.MessageEmbed();
-                        // MessageRank.setTitle("Rank up de : " + user.user.username);
-                        // MessageRank.setDescription("Date d'arriver" + dateArriver.toISOString().split('T').shift() + "\n" + "Dernier rank up " + dateLastRankUp.toISOString().split('T').shift());
-                        // //TODO 
-                        // message.channel.send(MessageRank).then(m=>{
-                        //     m.react("✅");
-                        //     m.react("❎");
-                        // });
-                        
-         
-                    
-                })
-        
+                dateLastRankUp = client.dataModule.LstMemberFac.find(x => x.idMember == user.user.id);
+                if (dateLastRankUp) {
+                    dateLastRankUp = new Date(dateLastRankUp.lastRankUp);
+                    dateLastRankUp = dateLastRankUp.toISOString().split('T').shift();
+                }
+                else
+                    dateLastRankUp = "**Info Non trouvé** \n attendre le prochain Rank up";
+
+                if (dateArriver)
+                dateArriver =   dateArriver.toISOString().split('T').shift()
+                else
+                    dateArriver = "un Problème";
+
+
+                MessageRank.setTitle("Rank up de : " + user.user.username);
+                MessageRank.setDescription("Date d'arriver : " + dateArriver + "\n" + "Dernier rank up : " + dateLastRankUp);
+                //TODO 
+                message.channel.send(MessageRank).then(m => {
+                    m.react("✅");
+                    m.react("❎");
+                });
+
+
+
+
             })
-            
+
         });
 
 
@@ -92,7 +80,7 @@ if (!roleFind)
 
         userID = args[1].replace('<@!', '').replace('>', '');
         user = message.guild.members.cache.get(userID);
-        
+
         let lstRolesUser = user._roles;
 
         // vérification 
@@ -107,7 +95,6 @@ if (!roleFind)
         if (args[0].toLowerCase() == "up") {
             let lastIdRole;
             let newIdRole;
-
             // recuperation du dernier role cas l'utilisateur dans la liste 
             let isRoleFinde = false// degueulace a remplacer 
 
@@ -115,13 +102,17 @@ if (!roleFind)
                 if (isRoleFinde == false) {
                     if (lstRolesUser.indexOf(element.role) != "-1") {
 
-                        if (lstRolesUser.indexOf(lstRoles[0].role) != -1) {
+                        let lastRole = lstRoles.find(x => x.ordre == lstRoles.length);
+
+                        if (lstRolesUser.indexOf(lastRole.role) != -1) {
                             message.channel.send("tu as atteint le dernier role")
                             isRoleFinde = true;
                             return;
                         }
                         newIdRole = lstRoles.find(x => x.ordre == element.ordre + 1).role;
                         lastIdRole = element.role;
+
+
 
 
                         if (!isNaN(newIdRole))
@@ -132,41 +123,71 @@ if (!roleFind)
 
                         //  let emojie = message.guild.emojis.cache.get()
                         let msgRankup = new Discord.MessageEmbed() // mettre sa dans emojie serveur :/ 
-                            .setDescription(message.guild.emojis.cache.get(config.emojiRankUp).toString() + " <@!" + userID + ">")
+                            .setDescription(message.guild.emojis.cache.get(client.dataModule.emojiRankUp).toString() + " <@!" + userID + ">")
                             .addField(" \n **Rank Up** en tant que **" + role.name + "**\nMerci de ton implication dans la faction.", "\u200B")
                             .setFooter(message.guild.name, message.guild.iconURL())
                             .setTimestamp()
                             .setColor(role.color);
                         salonRank.send(msgRankup);
-
                         isRoleFinde = true;
+
+                        let path = pathGlobalDataServer + message.guild.id + '/rank.json'
+                        if (!client.dataModule.LstMemberFac.find(x => x.idMember == userID)) {
+                            let objRank = new Object();
+                            objRank.idMember = userID;
+                            objRank.lastRankUp = Date.now();
+
+                            client.dataModule.LstMemberFac.push(objRank);
+                        }
+                        else {
+                            console.log(client.dataModule.LstMemberFac);
+                            let userRank = client.dataModule.LstMemberFac.find(x => x.idMember == userID);
+                            let indexUser = client.dataModule.LstMemberFac.indexOf(userRank);
+                            client.dataModule.LstMemberFac[indexUser].lastRankUp = Date.now();
+                        }
+
+
+                        const callback = function (err) {
+                            if (err) throw Error("Ajout du module Fait : Echec " + err);
+                            else message.channel.send("Ajout du module Fait  : Ok ").then(messageFini => {
+                                setTimeout(() => {
+                                    messageFini.delete()
+                                }, (10000));
+                            });
+                        };
+
+                        let objJSON = JSON.stringify(client.dataModule);
+                        fs.writeFile(path, objJSON, callback)
+
                     }
                 }
             });
 
-            if (isRoleFinde == false && lstRolesUser.indexOf(lstRoles[0].role) == -1) // cas du premier venu ( envoyer message ect... ect ... )
+            let firstRoles = lstRoles.find(x => x.ordre == 1);
+
+            if (isRoleFinde == false && lstRolesUser.indexOf(firstRoles.role) == -1) // cas du premier venu ( envoyer message ect... ect ... )
             {
-                let role = message.guild.roles.cache.get(lstRoles[lstRoles.length - 1].role);
+
+                let role = message.guild.roles.cache.get(firstRoles.role);
 
                 // user.removeRole(lastIdRole);
-                if(role){
-                user.roles.add(role);
+                if (role) {
+                    user.roles.add(role);
                 }
                 else
-                throw Error("Role non  trouver");
-                
-                config.OtherRoleWelcom.forEach(element => {
+                    throw Error("Role non  trouver");
+
+                client.dataModule.OtherRoleWelcom.forEach(element => {
                     user.roles.add(element);
                 })
 
                 let msgRankup = new Discord.MessageEmbed()
-                    .setDescription(message.guild.emojis.cache.get(config.emojiRankUp).toString() + " <@!" + userID + ">")
+                    .setDescription(message.guild.emojis.cache.get(client.dataModule.emojiRankUp).toString() + " <@!" + userID + ">")
                     .addField(" \n **Rank Up** en tant que **" + role.name + "** \n Merci de ton implication dans la faction.", "\u200B")
                     .setFooter(message.guild.name, message.guild.iconURL())
                     .setTimestamp()
                     .setColor(role.color);
 
-                    console.log("PATATATE");
                 salonRank.send(msgRankup);
             }
 
@@ -231,5 +252,5 @@ module.exports.help = {
     name: "rank",
     description: "permet la Gestion d'une Hierarchie",
     help: "-**Permet** l'instoration d'une Hierarchie sur le serveur",
-    useDataJson : true
+    useDataJson: true
 };
