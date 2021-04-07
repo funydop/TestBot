@@ -1,7 +1,6 @@
 
 const Discord = require("discord.js");
 const fs = require("fs");
-const { cpuUsage } = require("process");
 const pathGlobalDataServer = './ServerData/';
 
 // modif fait de variable 1 pourt l'objet et l'autre pour le path cvomme ça la pathe on le mets tout en haut pas besoin de le remetttre ( si ya besoin de la membre . guile quand même le mettre en haut pour le scop ) 
@@ -11,9 +10,11 @@ const pathGlobalDataServer = './ServerData/';
 
 module.exports.run = async (client, message, args) => {
     // recuperation configuration rank. 
-    if (!args[0])
-        throw new Error("merci de mettre un argument valide") // fait message opour !rank et !rank up 
-    // let author = message.guild.members.cache.get(message.author.id);
+    if (!args[0]){
+     console.log(client);
+        throw new Error("merci de mettre un argument valide \n exemple : `"+client.configurationServer.Prefix+"rank up identifiant`\n Argument Valide : Up / get / check / kick") // fait message opour !rank et !rank up 
+    }
+        // let author = message.guild.members.cache.get(message.author.id);
     let checkPerm = client.CheckPermission(client, message);
 
     if (!checkPerm)
@@ -29,38 +30,63 @@ module.exports.run = async (client, message, args) => {
             let lstUserWithRole = message.guild.roles.cache.get(element.role).members.map(m => m.user.id);
             // Tempo 
             // message.channel.send("Role : <@&" + element.role + ">" + lstUserWithRole);
+            if(element.ordre == lstRoles.length)
+            return;
+
 
             lstUserWithRole.forEach(userRole => {
+
+
                 let user = message.guild.members.cache.get(userRole);
                 let dateLastRankUp;
-                let dateArriver = new Date(user.joinedTimestamp);
+                let dateArriver;
                 let MessageRank = new Discord.MessageEmbed();
 
                 // salonRank.messages.fetch().then(MessageRankUp => {
                 // voir si plutard faut filtrer par id du salon; 
 
+                utilisateur = client.dataModule.LstMemberFac.find(x => x.idMember == user.user.id);
+                if (utilisateur) {
 
-                dateLastRankUp = client.dataModule.LstMemberFac.find(x => x.idMember == user.user.id);
-                if (dateLastRankUp) {
-                    dateLastRankUp = new Date(dateLastRankUp.lastRankUp);
-                    dateLastRankUp = dateLastRankUp.toISOString().split('T').shift();
+                    if (utilisateur.lastRankUp) {
+                        dateLastRankUp = new Date(utilisateur.lastRankUp);
+                        dateLastRankUp = dateLastRankUp.toISOString().split('T').shift();
+                    }
+                    else
+                        dateLastRankUp = "Error Info";
+
+                        if (utilisateur.dateJoin) {
+                            dateArriver = new Date(utilisateur.dateJoin);
+                            dateArriver = dateArriver.toISOString().split('T').shift();
+                        }
+                        else
+                            dateArriver = "Error Info";
+    
+
+
+                        MessageRank.setTitle("Rank up de : " + user.nickname);
+                        MessageRank.setDescription("Date d'arriver : " + dateArriver + "\n" + "Dernier rank up : " + dateLastRankUp);
+                        //TODO 
+                        message.channel.send(MessageRank).then(m => {
+                            m.react("✅");
+                            m.react("❎");
+                        });
+
+
                 }
-                else
-                    dateLastRankUp = "**Info Non trouvé** \n attendre le prochain Rank up";
+                else {
+                   
+                    MessageRank.setTitle("Rank up de : " + user.nickname);
+                    MessageRank.setDescription("Date d'arriver : ??? \n" + "Dernier rank up : ??? ");
+                    //TODO 
+                    message.channel.send(MessageRank).then(m => {
+                        m.react("✅");
+                        m.react("❎");
+                    });
+                }
 
-                if (dateArriver)
-                dateArriver =   dateArriver.toISOString().split('T').shift()
-                else
-                    dateArriver = "un Problème";
 
-
-                MessageRank.setTitle("Rank up de : " + user.user.username);
-                MessageRank.setDescription("Date d'arriver : " + dateArriver + "\n" + "Dernier rank up : " + dateLastRankUp);
-                //TODO 
-                message.channel.send(MessageRank).then(m => {
-                    m.react("✅");
-                    m.react("❎");
-                });
+               
 
 
 
@@ -72,11 +98,80 @@ module.exports.run = async (client, message, args) => {
 
 
     }
+    else if(args[0].toLowerCase() == "get")
+    {
+        // Variable : 
+
+        let tabDate =[
+        {dateRank:"17-03-2021",dateJoin:"17-03-2021",idUser:"438041969172676609"},
+        {dateRank:"27-03-2021",dateJoin:"27-03-2021",idUser:"482291118235451432"},
+        {dateRank:"10-02-2021",dateJoin:"10-02-2021",idUser:"335543227497316352"},
+        {dateRank:"06-02-2021",dateJoin:"21-12-2020",idUser:"382971081788751873"},
+        {dateRank:"09-03-2021",dateJoin:"09-03-2021",idUser:"609587876556046338"},
+        {dateRank:"08-02-2021",dateJoin:"08-02-2021",idUser:"382559506648793088"},
+        {dateRank:"15-03-2021",dateJoin:"15-03-2021",idUser:"691955096069603408"},
+        {dateRank:"02-01-2021",dateJoin:"28-11-2020",idUser:"334744785808130048"},
+        {dateRank:"27-03-2021",dateJoin:"27-03-2021",idUser:"353550548093501440"}
+        ]
+        
+        strFinale = "";
+        
+        tabDate.forEach(element=>{
+            console.log("\n\n  USER : " + element.idUser);
+        let Obj = new Object();
+        Obj.idMember = element.idUser;
+    
+    
+        // Rank 
+        let splitRank = element.dateRank.split("-");
+        let DateRank = new Date(splitRank[2], splitRank[1] - 1, splitRank[0]);
+        DateRank.setDate(DateRank.getDate()+1);
+        DateRank = DateRank.getTime();
+        console.log("TimeSpan Rank : " + DateRank);
+        Obj.lastRankUp = DateRank;
+    
+        DateRank = new Date(DateRank);
+        console.log(":Verification: => " + DateRank.toISOString().split('T').shift());
+    
+    
+        // join 
+        let splitJoin = element.dateJoin.split("-");
+        let DateJoin = new Date( splitJoin[2], splitJoin[1] - 1, splitJoin[0]);
+        DateJoin.setDate(DateJoin.getDate()+1);
+        DateJoin = DateJoin.getTime();
+        console.log("TimeSpan Join : " + DateJoin);
+        Obj.dateJoin = DateJoin;
+    
+        DateJoin = new Date(DateJoin);
+        console.log(":Verification: => " + DateJoin.toISOString().split('T').shift())+"\n";
+        
+        
+    
+        let StrObj = JSON.stringify(Obj);
+        strFinale = strFinale + "," + StrObj;
+        
+        console.log("Object :"); 
+        console.log(StrObj)
+    
+    
+        // fair le stringigy sur juste l'object pour pouvoir copy paste 
+    })
+        console.log("\n\nfinale");
+        console.log(strFinale);        
+    }
+    else if(args[0].toLowerCase() == "check")
+    {
+        message.channel.send("SOON SOON ")
+    }
+    else if(args[0].toLowerCase() == "kick")
+    {
+        message.channel.send("SOON SOON ausII")
+    }
     // pour le rank up 
     else {
 
-        if (!args[0] && (args[0].toLowerCase() != "up" || args[0].toLowerCase() != "down")) // refaire 
-            throw new Error("Merci de mettre un argument valide");
+        if (!args[0] && (args[0].toLowerCase() != "up" || args[0].toLowerCase() != "down"))  // refaire 
+            throw new Error("Merci de mettre un argument valide \n exemple : `"+client+"`");
 
         userID = args[1].replace('<@!', '').replace('>', '');
         user = message.guild.members.cache.get(userID);
@@ -93,6 +188,7 @@ module.exports.run = async (client, message, args) => {
 
 
         if (args[0].toLowerCase() == "up") {
+            let path = pathGlobalDataServer + message.guild.id + '/rank.json'
             let lastIdRole;
             let newIdRole;
             // recuperation du dernier role cas l'utilisateur dans la liste 
@@ -131,16 +227,10 @@ module.exports.run = async (client, message, args) => {
                         salonRank.send(msgRankup);
                         isRoleFinde = true;
 
-                        let path = pathGlobalDataServer + message.guild.id + '/rank.json'
                         if (!client.dataModule.LstMemberFac.find(x => x.idMember == userID)) {
-                            let objRank = new Object();
-                            objRank.idMember = userID;
-                            objRank.lastRankUp = Date.now();
-
-                            client.dataModule.LstMemberFac.push(objRank);
+                            // faire Errrore ou voir mais pas normal car, pas nouveau utilisateeurt du coup manque inbfp 
                         }
                         else {
-                            console.log(client.dataModule.LstMemberFac);
                             let userRank = client.dataModule.LstMemberFac.find(x => x.idMember == userID);
                             let indexUser = client.dataModule.LstMemberFac.indexOf(userRank);
                             client.dataModule.LstMemberFac[indexUser].lastRankUp = Date.now();
@@ -169,7 +259,6 @@ module.exports.run = async (client, message, args) => {
             {
 
                 let role = message.guild.roles.cache.get(firstRoles.role);
-
                 // user.removeRole(lastIdRole);
                 if (role) {
                     user.roles.add(role);
@@ -181,9 +270,28 @@ module.exports.run = async (client, message, args) => {
                     user.roles.add(element);
                 })
 
+                let objRank = new Object();
+                objRank.idMember = userID;
+                objRank.lastRankUp = Date.now();
+                objRank.dateJoin = Date.now()
+                client.dataModule.LstMemberFac.push(objRank);
+
+                const callback = function (err) {
+                    if (err) throw Error("Ajout du module Fait : Echec " + err);
+                    else message.channel.send("Ajout du module Fait  : Ok ").then(messageFini => {
+                        setTimeout(() => {
+                            messageFini.delete()
+                        }, (10000));
+                    });
+                };
+
+                let objJSON = JSON.stringify(client.dataModule);
+                fs.writeFile(path, objJSON, callback)
+
+
                 let msgRankup = new Discord.MessageEmbed()
                     .setDescription(message.guild.emojis.cache.get(client.dataModule.emojiRankUp).toString() + " <@!" + userID + ">")
-                    .addField(" \n **Rank Up** en tant que **" + role.name + "** \n Merci de ton implication dans la faction.", "\u200B")
+                    .addField(" \n **Bienvenue** en tant que **" + role.name + "** \n On espère que tu te plairas chez nous.", "\u200B")
                     .setFooter(message.guild.name, message.guild.iconURL())
                     .setTimestamp()
                     .setColor(role.color);
